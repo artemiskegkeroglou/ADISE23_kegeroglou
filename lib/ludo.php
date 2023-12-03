@@ -1,75 +1,94 @@
 <?php
-
+require_once "lib/dbconnect.php"; 
+require_once "lib/board.php";
 require_once "lib/game.php";
+require_once "lib/users.php";
 
-function handle_user($method, $b,$input) {
-	if($method=='GET') {
-		show_user($b);
-	} else if($method=='PUT') {
-        set_user($b,$input);
+
+$method = $_SERVER['REQUEST_METHOD'];
+$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+$input = json_decode(file_get_contents('php://input'),true);
+if($input==null) {
+    $input=[];
+}
+if(isset($_SERVER['HTTP_X_TOKEN'])) {
+    $input['token']=$_SERVER['HTTP_X_TOKEN'];
+} else {
+    $input['token']='';
+}
+
+
+// header("Content-Type: text/plain");
+// print "method=$method\n";
+// print "Path_info=".$_SERVER['PATH_INFO']."\n";
+// print_r($request);
+
+
+switch ($r=array_shift($request)) {
+    case 'board' : 
+        switch ($b=array_shift($request)) {
+            case '':
+            case null: handle_board($method,$input);
+                        break;
+            case 'piece': handle_piece($method, $request[0],$request[1],$input);
+                        break;
+            }
+            break;
+    case 'status': 
+			if(sizeof($request)==0) {handle_status($method);}
+			else {header("HTTP/1.1 404 Not Found");}
+			break;
+	case 'players': handle_player($method, $request,$input);
+			    break;
+	default:  header("HTTP/1.1 404 Not Found");
+                        exit;
+}
+
+
+function handle_board($method,$input) {
+    if($method=='GET') {
+            show_board($input);
+    } else if ($method=='POST') {
+            reset_board();
+            show_board($input);
+    } else {
+        header('HTTP/1.1 405 Method Not Allowed');
     }
+    
 }
 
-function show_user($b) {
-	global $mysqli;
-	$sql = 'select username,piece_color from players where piece_color=?';
-	$st = $mysqli->prepare($sql);
-	$st->bind_param('s',$b);
-	$st->execute();
-	$res = $st->get_result();
-	header('Content-type: application/json');
-	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
+    function handle_piece($method, $x,$y,$input) {
+        if($method=='GET') {
+            show_piece($x,$y);
+        } else if ($method=='PUT') {
+            move_piece($x,$y,$input['x'],$input['y'],  
+                       $input['token']);
+        }    
+  
+    
 }
 
-function set_user($b,$input) {
-    if(!isset($input['username']) || $input['username']=='') {
-		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg'=>"No username given."]);
-		exit;
+function handle_player($method, $p,$input) {
+    switch ($b=array_shift($p)) {
+	//	case '':
+	//	case null: if($method=='GET') {show_users($method);}
+	//			   else {header("HTTP/1.1 400 Bad Request"); 
+	//					 print json_encode(['errormesg'=>"Method $method not allowed here."]);}
+    //                break;
+        case 'R': 
+		case 'P': handle_user($method, $b,$input);
+					break;
+		default: header("HTTP/1.1 404 Not Found");
+				 print json_encode(['errormesg'=>"Player $b not found."]);
+                 break;
 	}
-	$username=$input['username'];
-	global $mysqli;
-
-	$sql = 'select count(*) as c from players where piece_color=? and username is not null';
-	$st = $mysqli->prepare($sql);
-	$st->bind_param('s',$b);
-	$st->execute();
-	$res = $st->get_result();
-	$r = $res->fetch_all(MYSQLI_ASSOC);
-	if($r[0]['c']>0) {
-		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg'=>"Player $b is already set. Please select another color."]);
-		exit;
-	}
-
-	$sql = 'update players set username=?, token=md5(CONCAT( ?, NOW()))  where piece_color=?';
-	$st2 = $mysqli->prepare($sql);
-	$st2->bind_param('sss',$username,$username,$b);
-	$st2->execute();
-
-	update_game_status();
-	$sql = 'select * from players where piece_color=?';
-	$st = $mysqli->prepare($sql);
-	$st->bind_param('s',$b);
-	$st->execute();
-	$res = $st->get_result();
-	header('Content-type: application/json');
-	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
 
-
-function current_color($token) {
-	
-	global $mysqli;
-	if($token==null) {return(null);}
-	$sql = 'select * from players where token=?';
-	$st = $mysqli->prepare($sql);
-	$st->bind_param('s',$token);
-	$st->execute();
-	$res = $st->get_result();
-	if($row=$res->fetch_assoc()) {
-		return($row['piece_color']);
-	}
-	return(null);
+function handle_status($method) {
+    if($method=='GET') {
+        show_status();
+    } else {
+        header('HTTP/1.1 405 Method Not Allowed');
+    }
 }
 ?>
