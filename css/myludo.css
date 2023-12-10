@@ -1,0 +1,6 @@
+#ludo_table td {width: 3em; height:3em;
+    border:1px solid black;text-align:center;}
+#ludo_table {border-collapse: collapse;}
+
+TD.R_square {background-color:hsl(0, 100%, 51%);}
+TD.P_square {background-color:hsl(318, 66%, 64%);}

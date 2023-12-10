@@ -6,6 +6,26 @@ function show_board() {
 	$st = $mysqli->prepare($sql);
 	$st->execute();
 	$res = $st->get_result();
+	header('Content-type: application/json');
+	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
+}
+
+function reset_board() {
+	global $mysqli;
+	
+	$sql = 'call clean_board()';
+	$mysqli->query($sql);
+	show_board();
+}
+
+/*
+function show_board() {
+    global $mysqli;
+	
+	$sql = 'select * from board';
+	$st = $mysqli->prepare($sql);
+	$st->execute();
+	$res = $st->get_result();
 	return($res->fetch_all(MYSQLI_ASSOC));
 }
 
@@ -164,7 +184,7 @@ function k2_moves(&$board,$b,$x,$y) {
 	return(bishop_rook_queen_moves($board,$b,$x,$y,$directions));
 */
 }
-/*
+
 
 function bishop_rook_queen_moves(&$board,$b,$x,$y,$directions) {
 	$moves=[];

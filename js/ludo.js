@@ -1,4 +1,52 @@
-var me={token:null,piece_color:null};
+
+$( function() {
+    draw_empty_board();
+    fill_board();
+    $('#ludo_reset').click(reset_board);
+}
+);
+function draw_empty_board() {
+	var t='<table id="ludo_table">';
+	for(var i=13;i>0;i--) {
+		t += '<tr>';
+		for(var j=1;j<14;j++) {
+			t += '<td class="ludo_square" id="square_'+j+'_'+i+'">' + j +','+i+'</td>'; 
+		}
+		t+='</tr>';
+	}
+	t+='</table>';
+	$('#ludo_board').html(t);
+}
+
+
+function fill_board() {
+	$.ajax(
+		{url: "ludo.php/board/", 
+		 success: fill_board_by_data 
+		}
+		);
+}
+
+function fill_board_by_data(data) {
+	for(var i=0;i<data.length;i++) {
+		var o = data[i];
+		var id = '#square_'+ o.x +'_' + o.y;
+		var c = (o.piece!=null)?o.piece_color + o.piece:'';
+        //var im = (o.piece!=null)?'<img class="piece" src="images/'+c+'.png">':'';
+		$(id).addClass(o.b_color+'_square');//.html(im);
+		
+	}
+}
+
+
+function reset_board() {
+	$.ajax(
+		{url: "ludo.php/board/", 
+         method: 'post',
+		 success: fill_board_by_data 
+		}
+		);
+}/*var me={token:null,piece_color:null};
 var game_status={};
 var board={};
 var last_update=new Date().getTime();
@@ -72,8 +120,8 @@ function fill_board_by_data(data) {
 	} else {
 		$('#move_div').hide(1000);
 	}*/
-}
-function login_to_game() {
+//}
+/*function login_to_game() {
 	if($('#username').val()=='') {
 		alert('You have to set a username');
 		return;
