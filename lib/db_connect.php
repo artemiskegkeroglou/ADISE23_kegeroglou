@@ -1,6 +1,6 @@
 <?php
-$host='localhost';
-$db = 'iee2019067_schema';
+$host='dblabs.iee.ihu.gr';
+$db = 'iee2019067';
 require_once "db_upass.php";
 
 $user=$DB_USER;
