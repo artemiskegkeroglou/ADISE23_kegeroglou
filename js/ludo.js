@@ -1,4 +1,3 @@
-
 $( function() {
     draw_empty_board();
     fill_board();

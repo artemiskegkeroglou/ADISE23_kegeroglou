@@ -183,7 +183,7 @@ function k2_moves(&$board,$b,$x,$y) {
 	];	
 	return(bishop_rook_queen_moves($board,$b,$x,$y,$directions));
 */
-}
+/*}
 
 
 function bishop_rook_queen_moves(&$board,$b,$x,$y,$directions) {
