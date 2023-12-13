@@ -2,19 +2,12 @@
 $host='dblabs.iee.ihu.gr';
 $db = 'iee2019067';
 require_once "db_upass.php";
+$user=root;
+$pass='';
 
-$user=$DB_USER;
-$pass=$DB_PASS;
 
-
-if(gethostname()=='users.iee.ihu.gr') {
-	$mysqli = new mysqli($host, $user, $pass, $db,null,'/home/student/iee/2019/iee2019067/mysql/run/mysql.sock');
-} else {
-		$pass=null;
-        $mysqli = new mysqli($host, $user, $pass, $db);
-}
+$mysqli = new mysqli($host, $user, $pass, $db, null, '/home/student/iee/2019/iee2019057/mysql/run/mysql.sock');
 
 if ($mysqli->connect_errno) {
-    echo "Failed to connect to MySQL: (" . 
-    $mysqli->connect_errno . ") " . $mysqli->connect_error;
+    die("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
 }?>
