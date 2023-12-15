@@ -1,23 +1,6 @@
 <?php
-/*require once "db_connect.php";
-$mysqli = new mysqli("servername", "username", "password", "dbname");
-if($mysqli->connect_error) {
-  exit('Could not connect');
-}*/
-$host='dblabs.iee.ihu.gr';
-$db = 'iee2019067';
-require_once "db_upass.php";
-$user=root;
-$pass='';
 
-
-$mysqli = new mysqli($host, $user, $pass, $db, null, '/home/student/iee/2019/iee2019057/mysql/run/mysql.sock');
-
-if ($mysqli->connect_errno) {
-    die("Failed to connect to MySQL: (" . $mysqli->connect_errno . ") " . $mysqli->connect_error);
-}
-
-$sql = "SELECT x, y, b_color from board where x=1, y=1";
+$sql = "SELECT x, y, b_color from board where x=1 and y=1";
 
 $stmt = $mysqli->prepare($sql);
 $stmt->bind_param("s", $_GET['q']);
