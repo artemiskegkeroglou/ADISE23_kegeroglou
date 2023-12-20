@@ -1,23 +1,65 @@
 <?php
+require_once "db_connect.php"; 
+require_once "../php/board.php";
+require_once "../php/game.php";
 
-$sql = "SELECT x, y, b_color from board where x=1 and y=1";
+$method = $_SERVER['REQUEST_METHOD'];
+$request = explode('/', trim($_SERVER['PATH_INFO'],'/'));
+$input = json_decode(file_get_contents('php://input'),true);
 
-$stmt = $mysqli->prepare($sql);
-$stmt->bind_param("s", $_GET['q']);
-$stmt->execute();
-$stmt->store_result();
-$stmt->bind_result($x, $y, $b_color);
-$stmt->fetch();
-$stmt->close();
+# print_r($request );
 
-echo "<table>";
-echo "<tr>";
-echo "<th>x</th>";
-echo "<td>" . $x . "</td>";
-echo "<th>y</th>";
-echo "<td>" . $y . "</td>";
-echo "<th>color</th>";
-echo "<td>" . $b_color . "</td>";
-echo "</tr>";
-echo "</table>";
+ switch ($r=array_shift($request)) {
+    case 'board' : 
+	switch ($b=array_shift($request)) {
+		case '': 
+		case null: handle_board($method);break;
+		case 'piece': handle_piece($method, $request[0],$request[1],$input);
+					break;
+//		case 'player': handle_player($method, $request[0],$input);
+//					break;
+		default: header("HTTP/1.1 404 Not Found");
+				break;
+	}
+		break;
+	case 'status': 
+		if(sizeof($request)==0) {handle_status($method);}
+		else {header("HTTP/1.1 404 Not Found");}
+		break;
+	case 'players': handle_player($method, $request,$input);
+			break;
+    default: 	
+	header("HTTP/1.1 404 Not Found");
+    print "<h1>not FOUND</h1>";
+	exit;
+}
+
+
+function handle_board($method) {
+    if($method=='GET') {
+            show_board();
+    } else if ($method=='POST') {
+           reset_board();
+    } else {
+        header('HTTP/1.1 405 Method Not Allowed');
+    }
+    
+}
+
+function handle_piece($method, $x,$y,$input) {
+    print("x=$x, y=$y");
+    print_r($input);
+}
+
+function handle_player($method, $p,$input) {
+    ;
+}
+
+function handle_status($method) {
+    if($method=='GET') {
+        show_status();
+    } else {
+        header('HTTP/1.1 405 Method Not Allowed');
+    }
+}
 ?>
