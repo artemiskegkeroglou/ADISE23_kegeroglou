@@ -1,8 +1,8 @@
 -- MySQL dump 10.13  Distrib 8.0.34, for Win64 (x86_64)
 --
--- Host: 127.0.0.1    Database: board_game
+-- Host: dblabs.iee.ihu.gr    Database: iee2019067
 -- ------------------------------------------------------
--- Server version	5.5.5-10.4.28-MariaDB
+-- Server version	5.7.35
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,7 +29,7 @@ CREATE TABLE `board` (
   `piece_color` enum('R','P') DEFAULT NULL,
   `piece` enum('K1','K2') DEFAULT NULL,
   PRIMARY KEY (`x`,`y`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -56,7 +56,7 @@ CREATE TABLE `board_empty` (
   `piece_color` enum('R','P') DEFAULT NULL,
   `piece` enum('K1','K2') DEFAULT NULL,
   PRIMARY KEY (`x`,`y`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -80,8 +80,8 @@ CREATE TABLE `game_status` (
   `status` enum('not active','initialized','started','ended','aborded') NOT NULL DEFAULT 'not active',
   `p_turn` enum('R','P') DEFAULT NULL,
   `result` enum('R','P','D') DEFAULT NULL,
-  `last_change` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `last_change` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,7 +90,7 @@ CREATE TABLE `game_status` (
 
 LOCK TABLES `game_status` WRITE;
 /*!40000 ALTER TABLE `game_status` DISABLE KEYS */;
-INSERT INTO `game_status` VALUES ('started','R','P','2022-11-29 13:00:00');
+INSERT INTO `game_status` VALUES ('started','R','P','2022-11-29 15:00:00');
 /*!40000 ALTER TABLE `game_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -105,9 +105,9 @@ CREATE TABLE `players` (
   `username` varchar(20) DEFAULT NULL,
   `piece_color` enum('P','R') NOT NULL,
   `token` varchar(100) DEFAULT NULL,
-  `last_action` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `last_action` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`piece_color`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -116,7 +116,7 @@ CREATE TABLE `players` (
 
 LOCK TABLES `players` WRITE;
 /*!40000 ALTER TABLE `players` DISABLE KEYS */;
-INSERT INTO `players` VALUES ('qqqqqq','P','8599a2efe05697622caeddae84507ee3','2022-11-29 13:00:01'),('aaaa','R','05da4297eecc648e840b6d3bfa772adc','2022-11-29 13:00:02');
+INSERT INTO `players` VALUES ('qqqqqq','P','8599a2efe05697622caeddae84507ee3','2022-11-29 15:00:01'),('aaaa','R','05da4297eecc648e840b6d3bfa772adc','2022-11-29 15:00:02');
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -129,4 +129,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-12-18 20:07:27
+-- Dump completed on 2023-11-29 13:04:35
