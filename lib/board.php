@@ -2,7 +2,7 @@
 function show_board() {
     global $mysqli;
 	
-	$sql = 'select * from board';
+	$sql = 'select * from board_game.board';
 	$st = $mysqli->prepare($sql);
 	$st->execute();
 	$res = $st->get_result();
