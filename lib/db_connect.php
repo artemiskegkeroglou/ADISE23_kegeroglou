@@ -1,6 +1,6 @@
 <?php
 $host='localhost';
-$db = 'board_game';
+$db = 'iee2019067_schema';
 require_once "../lib/db_upass.php";
 
 $user=$DB_USER;
