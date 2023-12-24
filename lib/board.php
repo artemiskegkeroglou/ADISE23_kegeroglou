@@ -30,8 +30,8 @@ show_piece($x,$y) {
 	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
 
-function move_piece($x,$y,$x2,$y2,$token) {
-	
+function move_piece($x,$y,$x2,$y2){//,$token) {
+	/*
 	if($token==null || $token=='') {
 		header("HTTP/1.1 400 Bad Request");
 		print json_encode(['errormesg'=>"token is not set."]);
@@ -43,18 +43,18 @@ function move_piece($x,$y,$x2,$y2,$token) {
 		header("HTTP/1.1 400 Bad Request");
 		print json_encode(['errormesg'=>"You are not a player of this game."]);
 		exit;
-	}
+	}*/
 	$status = read_status();
 	if($status['status']!='started') {
 		header("HTTP/1.1 400 Bad Request");
 		print json_encode(['errormesg'=>"Game is not in action."]);
 		exit;
-	}
+	}/*
 	if($status['p_turn']!=$color) {
 		header("HTTP/1.1 400 Bad Request");
 		print json_encode(['errormesg'=>"It is not your turn."]);
 		exit;
-	}
+	}*/
 	$orig_board=read_board();
 	$board=convert_board($orig_board);
 	$n = add_valid_moves_to_piece($board,$color,$x,$y);

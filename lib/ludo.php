@@ -50,7 +50,7 @@ function handle_piece($method, $x,$y,$input) {
     if($method=='GET') {
         show_piece($x,$y);
 } else ($method=='POST') {
-        move_piece($x,$y,$input['x'],$input['y'],$input['token']);
+        move_piece($x,$y,$input['x'],$input['y']);//,$input['token']);
 }
 
 }
