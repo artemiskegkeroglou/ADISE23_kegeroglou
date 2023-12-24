@@ -47,8 +47,12 @@ function handle_board($method) {
 }
 
 function handle_piece($method, $x,$y,$input) {
-    print("x=$x, y=$y");
-    print_r($input);
+    if($method=='GET') {
+        show_piece($x,$y);
+} else ($method=='POST') {
+        move_piece($x,$y,$input['x'],$input['y'],$input['token']);
+}
+
 }
 
 function handle_player($method, $p,$input) {
@@ -61,5 +65,12 @@ function handle_status($method) {
     } else {
         header('HTTP/1.1 405 Method Not Allowed');
     }
+}
+function do_move($x,$y,$x2,$y2) {
+	global $mysqli;
+	$sql = 'call `move_piece`(?,?,?,?);';
+	$st = $mysqli->prepare($sql);
+	$st->bind_param('iiii',$x,$y,$x2,$y2 );
+	$st->execute();
 }
 ?>
