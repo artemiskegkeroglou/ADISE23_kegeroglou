@@ -42,6 +42,14 @@ INSERT INTO `board` VALUES (1,1,'R','',''),(1,2,'R','',''),(1,3,'R','',''),(1,4,
 /*!40000 ALTER TABLE `board` ENABLE KEYS */;
 UNLOCK TABLES;
 
+
+DROP PROCEDURE IF EXISTS `clean_board`;
+DELIMITER //
+CREATE PROCEDURE `clean_board`()
+BEGIN
+	REPLACE INTO board SELECT * FROM board_empty;
+END//
+DELIMITER ;
 --
 -- Table structure for table `board_empty`
 --
@@ -93,6 +101,27 @@ LOCK TABLES `game_status` WRITE;
 INSERT INTO `game_status` VALUES ('started','R','P','2022-11-29 15:00:00');
 /*!40000 ALTER TABLE `game_status` ENABLE KEYS */;
 UNLOCK TABLES;
+
+
+DROP PROCEDURE IF EXISTS `move_piece`;
+DELIMITER //
+CREATE PROCEDURE `move_piece`(x1 tinyint,y1 tinyint,x2 tinyint,y2 tinyint)
+BEGIN
+	declare  p, p_color char;
+	
+	select  piece, piece_color into p, p_color FROM `board` WHERE X=x1 AND Y=y1;
+	
+	update board
+	set piece=p, piece_color=p_color
+	where x=x2 and y=y2;
+	
+	UPDATE board
+	SET piece=null,piece_color=null
+	WHERE X=x1 AND Y=y1;
+	update game_status set p_turn=if(p_color='W','B','W');
+	
+    END//
+DELIMITER ;
 
 --
 -- Table structure for table `players`
