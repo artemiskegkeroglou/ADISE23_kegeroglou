@@ -1,32 +1,42 @@
 <?php
 require_once "../lib/users.php";
-function move_piece($x,$y,$x2,$y2,$token) {
-	
-	if($token==null || $token=='') {
-		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg'=>"token is not set."]);
-		exit;
-	}
-	
-	$color = current_color($token);
-	if($color==null ) {
-		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg'=>"You are not a player of this game."]);
-		exit;
-	}
-	$status = read_status();
-	if($status['status']!='started') {
-		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg'=>"Game is not in action."]);
-		exit;
-	}
-	if($status['p_turn']!=$color) {
-		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg'=>"It is not your turn."]);
-		exit;
-	}
-	$orig_board=read_board();
-	$board=convert_board($orig_board);
+function move_piece($x,$y,$input) {
+	$x2=$input['x2'];
+    $y2=$input['y2'];
+    $piece_color=$input['piece_color'];
+
+	if($piece_color==null || $piece_color=='') {
+	header("HTTP/1.1 400 Bad Request");
+	print json_encode(['errormesg'=>"Color is not found."]);
+	exit; }
+	switch ($piece_color) {
+            case 'R': 
+            case 'P': $token = current_token($piece_color);
+			          if($token==null ) {
+				        header("HTTP/1.1 400 Bad Request");
+				        print json_encode(['errormesg'=>"You are not a player of this game."]);
+				        exit;}
+					  $status = read_status();
+	 				  if($status['status']!='started') {
+	 			        header("HTTP/1.1 400 Bad Request");
+	 				    print json_encode(['errormesg'=>"Game is not in action."]);
+	 				    exit;}	
+					  if($status['p_turn']!=$piece_color) {
+						header("HTTP/1.1 400 Bad Request");
+						print json_encode(['errormesg'=>"It is not your turn."]);
+						exit;}
+
+
+                        break;
+            default: header("HTTP/1.1 404 Not Found");
+                     print json_encode(['errormesg'=>"Player with piece_color $piece_color is not found."]);
+                     break;
+        }
+
+	 
+
+	// $orig_board=read_board();
+	// $board=convert_board($orig_board);
 	//$n = add_valid_moves_to_piece($board,$color,$x,$y);
 	
 	// if($n==0) {
@@ -36,7 +46,7 @@ function move_piece($x,$y,$x2,$y2,$token) {
 	// }
 	// foreach($board[$x][$y]['moves'] as $i=>$move) {
 	// 	if($x2==$move['x'] && $y2==$move['y']) {
-			do_move($x,$y,$x2,$y2);
+			do_move($x,$y,$x2,$y2,$input);
 			exit;
 	// 	}
 	// }
@@ -44,14 +54,14 @@ function move_piece($x,$y,$x2,$y2,$token) {
 	print json_encode(['errormesg'=>"This move is illegal."]);
 	exit;
 }
-function do_move($x,$y,$x2,$y2) {
+function do_move($x,$y,$x2,$y2,$input) {
 	global $mysqli;
 	$sql = 'call `move_piece`(?,?,?,?);';
 	$st = $mysqli->prepare($sql);
 	$st->bind_param('iiii',$x,$y,$x2,$y2 );
 	$st->execute();
 
-	show_board();
+	//show_board($input);
 }
 function show_piece($x,$y) {
 	global $mysqli;
@@ -67,7 +77,7 @@ function show_piece($x,$y) {
 function show_board($input) {
 	global $mysqli;
 	
-	$b=current_color($input['token']);
+	$b=$input['piece_color'];
 	if($b) {
 		show_board_by_player($b);
 	} else {
@@ -82,13 +92,13 @@ function show_board_by_player($b) {
 	$orig_board=read_board();
 	$board=convert_board($orig_board);
 	$status = read_status();
-	if($status['status']=='started' && $status['p_turn']==$b && $b!=null) {
+	/* if($status['status']=='started' && $status['p_turn']==$b && $b!=null) {
 		// It my turn !!!!
 		$n = add_valid_moves_to_board($board,$b);
 		
 		// Εάν n==0, τότε έχασα !!!!!
 		// Θα πρέπει να ενημερωθεί το game_status.
-	}
+	} */
 	header('Content-type: application/json');
 	print json_encode($orig_board, JSON_PRETTY_PRINT);
 }

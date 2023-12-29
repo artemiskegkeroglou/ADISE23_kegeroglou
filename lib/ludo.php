@@ -22,7 +22,7 @@ switch ($r=array_shift($request)) {
             case '':
             case null: handle_board($method,$input);
                         break;
-            case 'piece': handle_piece($method, $request[0], $request[1], $request[2], $request[3], $input);
+            case 'piece': handle_piece($method, $request[0], $request[1], $input);
                         break;
             }
             break;
@@ -53,11 +53,11 @@ function handle_board($method,$input) {
     
 }
 
-function handle_piece($method, $x, $y, $x2, $y2, $token) {
+function handle_piece($method, $x, $y, $input) {
     if($method=='GET') {
         show_piece($x,$y);
 } else if ($method=='PUT') {
-    move_piece($x,$y,$x2,$y2,$token);
+        move_piece($x,$y,$input);
 }
 
 }

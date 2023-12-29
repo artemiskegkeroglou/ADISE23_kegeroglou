@@ -58,17 +58,17 @@ function set_user($b,$input) {
 }
 
 
-function current_color($token) {
+function current_token($piece_color) {
 	
 	global $mysqli;
-	if($token==null) {return(null);}
-	$sql = 'select * from players where token=?';
+	if($piece_color==null) {return(null);}
+	$sql = 'select * from players where piece_color=?';
 	$st = $mysqli->prepare($sql);
-	$st->bind_param('s',$token);
+	$st->bind_param('s',$piece_color);
 	$st->execute();
 	$res = $st->get_result();
 	if($row=$res->fetch_assoc()) {
-		return($row['piece_color']);
+		return($row['token']);
 	}
 	return(null);
 }
