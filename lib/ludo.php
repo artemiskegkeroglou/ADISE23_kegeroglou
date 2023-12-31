@@ -26,16 +26,12 @@ switch ($r=array_shift($request)) {
                         break;
             }
             break;
-    case 'define_player' : define_player($method, $request[0],$request[1]);
-                break;
     case 'players': handle_player($method, $request, $input);
 	        break;
     case 'status': 
 		if(sizeof($request)==0) {handle_status($method);}
 		else {header("HTTP/1.1 404 Not Found");}
 			    break; 
-    case 'reset_color' : reset_color();
-            break;
  	default:  header("HTTP/1.1 404 Not Found");
             exit;
 }
@@ -85,33 +81,4 @@ function handle_status($method) {
         header('HTTP/1.1 405 Method Not Allowed');
     }
 }
-
-// function define_player($method, $username, $n, $length = 16) {
-//     if($method=='PUT'){
-//         if($n==0){
-//             $piece_color='R';
-//             $string = uniqid(rand());
-//             $randomString = substr($string, 0, $length);
-//             $username = $data['username'];
-//             global $mysqli;
-//             $sql = "INSERT INTO players VALUES ('$username', 'R', '$randomString')";
-// 	        $st = $mysqli->prepare($sql);
-// 	        $st->bind_param('iii', $username, $piece_color, $randomString);
-// 	        $st->execute();
-//         }
-//         else{
-//             $piece_color='P';
-//             $string = uniqid(rand());
-//             $randomString = substr($string, 0, $length);
-//             global $mysqli;
-// 	        $sql = "INSERT INTO players (username, piece_color, token) VALUES (?, ?, ?)";
-// 	        $st = $mysqli->prepare($sql);
-// 	        $st->bind_param('iii', $username, $piece_color, $randomString);
-// 	        $st->execute();
-//         }
-        
-//     } else {
-//         header('HTTP/1.1 405 Method Not Allowed');
-//     }
-// }
 ?>
