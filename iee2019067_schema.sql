@@ -106,11 +106,12 @@ UNLOCK TABLES;
 --Procedure for move
 DROP PROCEDURE IF EXISTS `move_piece`;
 DELIMITER //
-CREATE PROCEDURE `move_piece`(x1 tinyint,y1 tinyint,x2 tinyint,y2 tinyint)
+CREATE PROCEDURE `move_piece`(x1 tinyint,y1 tinyint,x2 tinyint,y2 tinyint,color_of_player char)
 BEGIN
 declare p, p_color varchar(2);
 	select  piece into p  FROM `board` WHERE X=x1 AND Y=y1;
 	select  piece_color into p_color  FROM `board` WHERE X=x1 AND Y=y1;
+    if(color_of_player!=p_color) then 
 	update board
 	set piece=p, piece_color=p_color
 	where x=x2 and y=y2;
@@ -119,7 +120,7 @@ declare p, p_color varchar(2);
 	SET piece=null,piece_color=null
 	WHERE X=x1 AND Y=y1;
 	update game_status set p_turn=if(p_color='P','R','P');
-	
+    end if;
     END//
 DELIMITER ;
 --end of procedure

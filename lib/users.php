@@ -73,4 +73,18 @@ function current_token($piece_color) {
 	return(null);
 }
 
+function pawn_color($x,$y) {
+	
+	global $mysqli;
+	$sql = 'select piece_color from board where x=? and y=?';
+	$st = $mysqli->prepare($sql);
+	$st->bind_param('ii',$x,$y);
+	$st->execute();
+	$res = $st->get_result();
+	if($row=$res->fetch_assoc()) {
+		return($row['piece_color']);
+	}
+	return(null);
+}
+
 ?>
