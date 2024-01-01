@@ -196,7 +196,7 @@ function show_winner(){
 }
 function update_winner($idWinner){
 	global $mysqli;
-	$sql = 'update show_winner set status=1 where id=?'; //Status=0=not winner if status=1=winner, id=1 for red player and id=2 for purple player
+	$sql = 'update show_winner set status=1 where id=?'; //Status=0=no winner if status=1=winner, id=1 for red player and id=2 for purple player
 	$st = $mysqli->prepare($sql);
 	$st->bind_param('i',$idWinner);
 	$st->execute();

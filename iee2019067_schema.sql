@@ -65,6 +65,7 @@ DELIMITER //
 CREATE PROCEDURE `clean_board`()
 BEGIN
 	REPLACE INTO board SELECT * FROM board_empty;
+	UPDATE show_winner SET status=0 WHERE id=1 or id=2; //set status=0=no winner for players
 END//
 DELIMITER ;
 
@@ -201,6 +202,29 @@ INSERT INTO `players` VALUES ('mixalis','P','8fec6ad8366e07795edbd3736fe79d87','
 /*!40000 ALTER TABLE `players` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+--table to identify the winner
+
+DROP TABLE IF EXISTS `show_winner`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `show_winner` (
+  `id` int not null,
+  `winner` varchar(15) not null,
+  `status` int default 0,
+  PRIMARY KEY (`id`,`winner`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `show_winner`
+--
+
+LOCK TABLES `show_winner` WRITE;
+/*!40000 ALTER TABLE `show_winner` DISABLE KEYS */;
+INSERT INTO `show_winner` VALUES (1,"Red player", 0),(2,"Purple player", 0); //id=1 for red, id=2 for purple player. Status=0=no winner, status=1=winner
+/*!40000 ALTER TABLE `show_winner` ENABLE KEYS */;
+UNLOCK TABLES;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
