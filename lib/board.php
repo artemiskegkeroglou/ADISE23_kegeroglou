@@ -2,9 +2,11 @@
 require_once "../lib/users.php";
 
 function move_piece($x,$y,$input) {
-	$win_status=win_status($R,$P);
-	if($win_status!=null){
-		return($win_status);
+
+	if(show_winner()!=null){
+		$winner=show_winner();
+		print_r("$winner won");
+		exit;
 	}
     $piece_color=$input['piece_color'];
 	if($piece_color==null || $piece_color=='') {
@@ -41,11 +43,10 @@ function move_piece($x,$y,$input) {
 		header("HTTP/1.1 400 Bad Request");
 		print json_encode(['errormesg'=>"You have access to move only your pawns."]);
 		exit;}
-	$orig_board = read_board();
-	$board = convert_board($orig_board);
-	
-	$dice = rand(1,12); //as sum of two dices
+		
+	$dice = rand(2,12); //as sum of two dices
 	print_r("Dice: $dice");
+	print_r ("\n");
 	$piece=selectPiece($x,$y);
 	
 	if($piece_color=='R'){
@@ -55,7 +56,8 @@ function move_piece($x,$y,$input) {
 			$number=51;
 			$x2=move_Rx($number);
 			$y2=move_Ry($number);
-			print_r("Finish K1 in 7,5, K2 in position 3,2");
+			print_r("Finish K1 in x=7 y=5. K2 in position x=3 y=2");
+			print_r ("\n");
 			do_move($x,$y,$x2,$y2,$piece_color);
 			exit;
 		}
@@ -63,15 +65,17 @@ function move_piece($x,$y,$input) {
 			$number=50;
 			$x2=move_Rx($number);
 			$y2=move_Ry($number);
-			win_status(1,0);
+			update_winner(1);
 			print_r("You won!!!"); //stop the game and message to other player
+			print_r ("\n");
 			do_move($x,$y,$x2,$y2,$piece_color);
 			exit;
 		}
 		else {
 		    $x2=move_Rx($number);
 		    $y2=move_Ry($number);
-		    print_r("Next position: $x2,$y2");
+		    print_r("Next position: x=$x2 y=$y2");
+			print_r ("\n");
 		    do_move($x,$y,$x2,$y2,$piece_color);
 		    exit;
 		}
@@ -83,7 +87,8 @@ function move_piece($x,$y,$input) {
 			$number=51;
 			$x2=move_Px($number);
 			$y2=move_Py($number);
-			print_r("Finish K1 in 7,9, K2 in position 11,12");
+			print_r("Finish K1 in x=7 y=9. K2 in position x=11 y=12");
+			print_r ("\n");
 			do_move($x,$y,$x2,$y2,$piece_color);
 			exit;
 		}
@@ -91,14 +96,16 @@ function move_piece($x,$y,$input) {
 			$x2=move_Px($number);
 		    $y2=move_Py($number);
 			print_r("You won!!!"); //stop the game and message to other player
-			win_status(0,1);
+			print_r ("\n");
+			update_winner(2);
 			do_move($x,$y,$x2,$y2,$piece_color);
 			exit;
 		}
 		else {
 			$x2=move_Px($number);
 			$y2=move_Py($number);
-			print_r("Next position: $x2,$y2");
+			print_r("Next position: x=$x2 y=$y2");
+			print_r ("\n");
 			do_move($x,$y,$x2,$y2,$piece_color);
 			exit;}
 	}

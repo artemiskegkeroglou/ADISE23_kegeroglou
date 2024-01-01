@@ -48,7 +48,8 @@ function set_user($b,$input) {
 	$st2->execute();
 
 	update_game_status();
-	print_r("First move for red player:4,2 and for purple player:10,12!");
+	print_r("First move for red player : x=4 y=2 and for purple player : x=10 y=12!");
+	print_r ("\n");
 	$sql = 'select * from players where piece_color=?';
 	$st = $mysqli->prepare($sql);
 	$st->bind_param('s',$b);
@@ -182,16 +183,23 @@ function move_Pnumber($x,$y){
 	}
 	return(null);
 }
-
-function win_status($R,$P){
-	if($R==1){
-		return("Red player won");
+function show_winner(){
+	global $mysqli;
+	$sql = 'select winner from show_winner where status=1';
+	$st = $mysqli->prepare($sql);
+	$st->execute();
+	$res = $st->get_result();
+	if($row=$res->fetch_assoc()) {
+		return($row['winner']);
 	}
-	else if($P==1){
-		return("Purple player won");
-	}
-	else {return (null);}
-
+	return(null);
 }
-
+function update_winner($idWinner){
+	global $mysqli;
+	$sql = 'update show_winner set status=1 where id=?'; //Status=0=not winner if status=1=winner, id=1 for red player and id=2 for purple player
+	$st = $mysqli->prepare($sql);
+	$st->bind_param('i',$idWinner);
+	$st->execute();
+	$res = $st->get_result();
+}
 ?>
