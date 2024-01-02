@@ -10,19 +10,19 @@ $input = json_decode(file_get_contents('php://input'),true);
 if($input==null) {
     $input=[];
 }
-if(isset($_SERVER['HTTP_X_TOKEN'])) {
+/* if(isset($_SERVER['HTTP_X_TOKEN'])) {
     $input['token']=$_SERVER['HTTP_X_TOKEN'];
 } else {
     $input['token']='';
 }
-
+ */
 switch ($r=array_shift($request)) {
     case 'board' : 
         switch ($b=array_shift($request)) {
             case '':
             case null: handle_board($method,$input);
                         break;
-            case 'piece': handle_piece($method, $request[0], $request[1], $input);
+            case 'piece': handle_piece($method, $input);
                         break;
             }
             break;
@@ -31,7 +31,7 @@ switch ($r=array_shift($request)) {
     case 'status': 
 		if(sizeof($request)==0) {handle_status($method);}
 		else {header("HTTP/1.1 404 Not Found");}
-			    break; 
+			break; 
  	default:  header("HTTP/1.1 404 Not Found");
             exit;
 }
@@ -39,20 +39,23 @@ switch ($r=array_shift($request)) {
 
 function handle_board($method,$input) {
     if($method=='GET') {
-            show_board($input);
+            show_board();
     } else if ($method=='POST') {
-           reset_board($input);
-           show_board($input);
+           reset_board();
     } else {
         header('HTTP/1.1 405 Method Not Allowed');
     }
     
 }
 
-function handle_piece($method, $x, $y, $input) {
+function handle_piece($method, $input) {
     if($method=='GET') {
+        $x=get_position($input['piece_color'],'x');
+        $y=get_position($input['piece_color'],'y');
         show_piece($x,$y);
-} else if ($method=='PUT') {
+}   else if ($method=='PUT') {
+        $x=get_position($input['piece_color'],'x');
+        $y=get_position($input['piece_color'],'y');
         move_piece($x,$y,$input);
 }
 
@@ -60,11 +63,11 @@ function handle_piece($method, $x, $y, $input) {
 
 function handle_player($method, $p,$input) {
     switch ($b=array_shift($p)) {
-        //	case '':
-        //	case null: if($method=='GET') {show_users($method);}
-        //			   else {header("HTTP/1.1 400 Bad Request"); 
-        //					 print json_encode(['errormesg'=>"Method $method not allowed here."]);}
-        //                break;
+        	case '':
+        	case null: if($method=='GET') {show_users($method);}
+        			   else {header("HTTP/1.1 400 Bad Request"); 
+        					 print json_encode(['errormesg'=>"Method $method not allowed here."]);}
+                        break;
             case 'R': 
             case 'P': handle_user($method, $b, $input);
                         break;

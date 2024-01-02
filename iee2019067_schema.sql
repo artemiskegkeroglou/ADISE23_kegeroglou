@@ -65,9 +65,18 @@ DELIMITER //
 CREATE PROCEDURE `clean_board`()
 BEGIN
 	REPLACE INTO board SELECT * FROM board_empty;
-	UPDATE show_winner SET status=0 WHERE id=1 or id=2; //set status=0=no winner for players
+	UPDATE show_winner SET status=0 WHERE id=1 or id=2; -- set status=0=no winner for players
+	DELETE FROM players WHERE piece_color='P';
+	INSERT INTO players (piece_color) VALUES ('P');
+	DELETE FROM players where piece_color='R';
+	INSERT INTO players (piece_color) VALUES ('R');
+        DELETE FROM position where id=1 or id=2;
+	INSERT INTO position VALUES (1, 4, 2), (2,10,12);
+	DELETE FROM game_status;
+	INSERT INTO game_status VALUES ("started","R",null,"2023-12-31 18:01:55");
 END//
 DELIMITER ;
+
 
 --
 -- Dumping data for table `board_empty`
@@ -88,8 +97,8 @@ DROP TABLE IF EXISTS `game_status`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `game_status` (
   `status` enum('not active','initialized','started','ended','aborded') NOT NULL DEFAULT 'not active',
-  `p_turn` enum('P','R') DEFAULT NULL,
-  `result` enum('P','R','D') DEFAULT NULL,
+  `p_turn` varchar(10) DEFAULT NULL,        -- enum('P','R')
+  `result` varchar(10) DEFAULT NULL,
   `last_change` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -100,7 +109,7 @@ CREATE TABLE `game_status` (
 
 LOCK TABLES `game_status` WRITE;
 /*!40000 ALTER TABLE `game_status` DISABLE KEYS */;
-INSERT INTO `game_status` VALUES ('started','R','D','2023-12-31 18:01:55');
+INSERT INTO `game_status` VALUES ('started','R',null,'2023-12-31 18:01:55');
 /*!40000 ALTER TABLE `game_status` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -110,9 +119,9 @@ DELIMITER //
 CREATE PROCEDURE `move_piece`(x1 tinyint,y1 tinyint,x2 tinyint,y2 tinyint,color_of_player char)
 BEGIN
 declare p, p_color varchar(2);
-	select  piece into p  FROM `board` WHERE X=x1 AND Y=y1;
-	select  piece_color into p_color  FROM `board` WHERE X=x1 AND Y=y1;
-    if(color_of_player!=p_color) then 
+select  piece into p  FROM `board` WHERE X=x1 AND Y=y1;
+select  piece_color into p_color  FROM `board` WHERE X=x1 AND Y=y1;
+if(color_of_player!=p_color) then 
 	update board
 	set piece=p, piece_color=p_color
 	where x=x2 and y=y2;
@@ -203,6 +212,7 @@ INSERT INTO `players` VALUES ('mixalis','P','8fec6ad8366e07795edbd3736fe79d87','
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+
 --table to identify the winner
 
 DROP TABLE IF EXISTS `show_winner`;
@@ -225,6 +235,7 @@ LOCK TABLES `show_winner` WRITE;
 INSERT INTO `show_winner` VALUES (1,"Red player", 0),(2,"Purple player", 0); //id=1 for red, id=2 for purple player. Status=0=no winner, status=1=winner
 /*!40000 ALTER TABLE `show_winner` ENABLE KEYS */;
 UNLOCK TABLES;
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
