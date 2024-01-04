@@ -102,7 +102,7 @@ DROP TABLE IF EXISTS `move_P`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `move_P` (
-  `number` int(11) NOT NULL,
+  `number` int(5) NOT NULL,
   `x` tinyint(1) NOT NULL,
   `y` tinyint(1) NOT NULL,
   PRIMARY KEY (`number`,`x`,`y`)
@@ -127,7 +127,7 @@ DROP TABLE IF EXISTS `move_R`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `move_R` (
-  `number` int(11) NOT NULL,
+  `number` int(5) NOT NULL,
   `x` tinyint(1) NOT NULL,
   `y` tinyint(1) NOT NULL,
   PRIMARY KEY (`number`,`x`,`y`)
@@ -214,14 +214,38 @@ CREATE TABLE `show_winner` (
 -- Dumping data for table `show_winner`
 --
 
-
-
 LOCK TABLES `show_winner` WRITE;
 /*!40000 ALTER TABLE `show_winner` DISABLE KEYS */;
 INSERT INTO `show_winner` VALUES (1,'Red player',0),(2,'Purple player',0);
 /*!40000 ALTER TABLE `show_winner` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+
+--
+-- Table structure for table `show_winner`
+--
+DROP TABLE IF EXISTS `score`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `score` (
+  `Red` int(5) NOT NULL,
+  `Purple` int(5) NOT NULL,
+  PRIMARY KEY (`Red`,`Purple`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `score`
+--
+
+LOCK TABLES `score` WRITE;
+/*!40000 ALTER TABLE `score` DISABLE KEYS */;
+INSERT INTO `score` VALUES (0,0);
+/*!40000 ALTER TABLE `score` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 
 -- Procedures
 
@@ -236,20 +260,19 @@ BEGIN
 	INSERT INTO players (piece_color) VALUES ('P');
 	DELETE FROM players where piece_color='R';
 	INSERT INTO players (piece_color) VALUES ('R');
-        DELETE FROM position where id=1 or id=2;
+  DELETE FROM position where id=1 or id=2;
 	INSERT INTO position VALUES (1, 4, 2), (2,10,12);
 	DELETE FROM game_status;
 	INSERT INTO game_status VALUES ("started","R",null,"2023-12-31 18:01:55");
 END//
 DELIMITER ;
 
-
 -- Dumping structure for procedure iee2019067_schema.move_piece
 DROP PROCEDURE IF EXISTS `move_piece`;
 DELIMITER //
 CREATE PROCEDURE `move_piece`(x1 tinyint,y1 tinyint,x2 tinyint,y2 tinyint,color_of_player char)
 BEGIN
-declare p, p_color varchar(2);
+  declare p, p_color varchar(2);
 	select  piece into p  FROM `board` WHERE X=x1 AND Y=y1;
 	select  piece_color into p_color  FROM `board` WHERE X=x1 AND Y=y1;
     if(color_of_player!=p_color) then 
@@ -260,11 +283,41 @@ declare p, p_color varchar(2);
 	UPDATE board
 	SET piece=null,piece_color=null
 	WHERE X=x1 AND Y=y1;
-	update game_status set p_turn=if(p_color='P','R','P');
+  update game_status set p_turn=if(p_color='P','R','P');
     end if;
 END//
 DELIMITER ;
 
+
+-- Dumping structure for procedure iee2019067_schema.count_score
+DROP PROCEDURE IF EXISTS `count_score`; -- clean score
+DELIMITER //
+CREATE PROCEDURE `count_score`()
+BEGIN
+    declare r_value int(5);
+    declare p_value int(5);
+    declare r varchar(10);
+    declare p varchar(10);
+    declare status1 varchar(10);
+    declare status2 varchar(10);
+    declare status_value varchar(10);
+    declare RorP varchar(2);
+    set r="Red", p="Purple";
+    set status1="aborded";
+    set status2="ended";
+    select status into status_value from game_status;
+    
+    select result into RorP from game_status where status='ended';
+	if(RorP='R') then
+    select Red into r_value from score;
+	UPDATE score set Red=r_value+1;
+	end if;
+    if (RorP='P') then
+    select Purple into p_value from score;
+	UPDATE score set Purple=p_value+1;
+    end if;
+END//
+DELIMITER ;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

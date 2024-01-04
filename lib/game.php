@@ -5,6 +5,7 @@ require_once "../lib/users.php";
 function show_status() {
 	global $mysqli;
 	check_abort();
+	show_score();
 	$sql = 'select * from game_status';
 	$st = $mysqli->prepare($sql);
 
@@ -17,7 +18,7 @@ function show_status() {
 
 function check_abort() {
 	global $mysqli;
-	$sql = "update game_status set status='aborded', result=if(p_turn='R','P','R'),p_turn=null where p_turn is not null and last_change<(now()-INTERVAL 5 MINUTE) and status='started'";
+	$sql = "update game_status set status='aborded', result=null, p_turn=null where p_turn is not null and last_change<(now()-INTERVAL 5 MINUTE) and status='started'";
 	$st = $mysqli->prepare($sql);
 	$r = $st->execute();
 }
@@ -59,8 +60,6 @@ function update_game_status() { //status value='not active' or 'initialized' or 
 			$new_status='aborted';
 		}
 	}
-
-	
 	$sql = 'select count(*) as c from players where username is not null';
 	$st = $mysqli->prepare($sql);
 	$st->execute();
@@ -86,19 +85,18 @@ function update_game_status() { //status value='not active' or 'initialized' or 
 
 
 
-	function pawn_color($x,$y) {
-	
-		global $mysqli;
-		$sql = 'select piece_color from board where x=? and y=?';
-		$st = $mysqli->prepare($sql);
-		$st->bind_param('ii',$x,$y);
-		$st->execute();
-		$res = $st->get_result();
-		if($row=$res->fetch_assoc()) {
-			return($row['piece_color']);
-		}
-		return(null);
+function pawn_color($x,$y) {
+	global $mysqli;
+	$sql = 'select piece_color from board where x=? and y=?';
+	$st = $mysqli->prepare($sql);
+	$st->bind_param('ii',$x,$y);
+	$st->execute();
+	$res = $st->get_result();
+	if($row=$res->fetch_assoc()) {
+		return($row['piece_color']);
 	}
+	return(null);
+}
 	
 function selectPiece($x,$y){
 	global $mysqli;
@@ -112,6 +110,7 @@ function selectPiece($x,$y){
 	}
 	return(null);
 }
+
 //for red player
 function move_Rx($number){
 	global $mysqli;
@@ -125,6 +124,7 @@ function move_Rx($number){
 	}
 	return(null);
 }
+
 function move_Ry($number){
 	global $mysqli;
 	$sql = 'select y from move_R where number=?';
@@ -137,6 +137,7 @@ function move_Ry($number){
 	}
 	return(null);
 }
+
 function move_Rnumber($x,$y){
 	if((($x==4) && ($y==2))||(($x==3) && ($y==2))) //arxikes theseis tou K1 kai K2 gia red player
 	{
@@ -153,6 +154,7 @@ function move_Rnumber($x,$y){
 	}
 	return(null);
 }
+
 //for purple player
 function move_Px($number){
 	global $mysqli;
@@ -166,6 +168,7 @@ function move_Px($number){
 	}
 	return(null);
 }
+
 function move_Py($number){
 	global $mysqli;
 	$sql = 'select y from move_P where number=?';
@@ -207,6 +210,22 @@ function ispawn($x2,$y2) { //function for destination position
 		return($row['piece_color']);
 	}
 	return(null);
+}
+
+function count_score(){  //set score of Red Purple players
+    global $mysqli;
+	$sql = 'call `count_score`();';
+	$st = $mysqli->prepare($sql);
+	$st->execute();
+}
+function show_score(){  //show score of Red Purple players
+    global $mysqli;
+	$sql = 'select * from score';
+	$st = $mysqli->prepare($sql);
+	$st->execute();
+	$res = $st->get_result();
+	header('Content-type: application/json');
+	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
 
 ?>

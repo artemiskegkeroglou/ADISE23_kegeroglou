@@ -16,6 +16,7 @@ function show_user($b) {
 	$st->bind_param('s',$b);
 	$st->execute();
 	$res = $st->get_result();
+
 	header('Content-type: application/json');
 	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
@@ -23,7 +24,7 @@ function show_user($b) {
 function set_user($b,$input) {
     if(!isset($input['username']) || $input['username']=='') {
 		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg'=>"No username given."]);
+		print json_encode(['Error message'=>"No username given."]);
 		exit;
 	}
 	$username=$input['username'];
@@ -37,7 +38,7 @@ function set_user($b,$input) {
 	$r = $res->fetch_all(MYSQLI_ASSOC);
 	if($r[0]['c']>0) {
 		header("HTTP/1.1 400 Bad Request");
-		print json_encode(['errormesg'=>"Player $b is already set. Please select another color."]);
+		print json_encode(['Error message'=>"Player $b is already set. Please select another color."]);
 		exit;
 	}
 
@@ -53,6 +54,7 @@ function set_user($b,$input) {
 	$st->bind_param('s',$b);
 	$st->execute();
 	$res = $st->get_result();
+
 	header('Content-type: application/json');
 	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
@@ -104,7 +106,7 @@ function set_result($result){ //set result for the end of game
 		$st = $mysqli->prepare($sql);
 		$st->execute();
 	}
-	else {
+	else if($result=='Purple'){
 		$sql = "update game_status set result='P'";
 		$st = $mysqli->prepare($sql);
 		$st->execute();
@@ -117,6 +119,7 @@ function show_users() {
 	$st = $mysqli->prepare($sql);
 	$st->execute();
 	$res = $st->get_result();
+
 	header('Content-type: application/json');
 	print json_encode($res->fetch_all(MYSQLI_ASSOC), JSON_PRETTY_PRINT);
 }
