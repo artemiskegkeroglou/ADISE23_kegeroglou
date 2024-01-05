@@ -165,7 +165,6 @@ function move_piece($x,$y,$input) {
 }
 function do_move($x,$y,$x2,$y2,$piece_color) {
 	global $mysqli;
-
 	$sql = 'call `move_piece`(?,?,?,?,?);';
 	$st = $mysqli->prepare($sql);
 	$st->bind_param('iiiii',$x,$y,$x2,$y2,$piece_color);
@@ -199,7 +198,7 @@ function reset_board() {
 	global $mysqli;
 	$sql = 'call clean_board()';
 	$mysqli->query($sql);
-	update_game_status(); //set status=not active
+	update_game_status(); 
     show_board();
 }
 

@@ -23,6 +23,8 @@ switch ($r=array_shift($request)) {
             break;
     case 'players': handle_player($method, $request, $input);
 	        break;
+    case 'drop_players': drop_players($method);
+            break;
     case 'status': 
 		if(sizeof($request)==0) {handle_status($method);}
 		else {header("HTTP/1.1 404 Not Found");}
@@ -53,6 +55,9 @@ function handle_piece($method, $input) {
         $y=get_position($input['piece_color'],'y');
         move_piece($x,$y,$input);
 }
+else {
+    header('HTTP/1.1 405 Method Not Allowed');
+}
 
 }
 
@@ -79,4 +84,17 @@ function handle_status($method) {
         header('HTTP/1.1 405 Method Not Allowed');
     }
 }
+
+function drop_players($method) {
+    if($method=='POST'){
+        global $mysqli;
+	    $sql = 'call `drop_players`();'; //procedure gia diagrafh paiktwn kai tou score tous
+	    $st = $mysqli->prepare($sql);
+	    $st->execute();}
+    else {
+        header('HTTP/1.1 405 Method Not Allowed');
+    }
+    
+}
+
 ?>

@@ -181,7 +181,7 @@ CREATE TABLE `position` (
   `id` int(11) NOT NULL,
   `x` tinyint(1) NOT NULL,
   `y` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`,`x`,`y`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -249,21 +249,32 @@ UNLOCK TABLES;
 
 -- Procedures
 
+
 -- Dumping structure for procedure iee2019067_schema.clean_board
 DROP PROCEDURE IF EXISTS `clean_board`; 
 DELIMITER //
 CREATE PROCEDURE `clean_board`()
 BEGIN
 	REPLACE INTO board SELECT * FROM board_empty;
-	UPDATE show_winner SET status=0 WHERE id=1 or id=2; -- set status=0=no winner for players
+	UPDATE show_winner SET status=0 WHERE id=1 or id=2; -- set status=0=no winner, for a new game
+  DELETE FROM position where id=1 or id=2;
+	INSERT INTO position VALUES (1, 4, 2), (2, 10, 12);
+	UPDATE game_status SET status="started", p_turn=null, result=null, last_change="2023-12-31 18:01:55";
+END//
+DELIMITER ;
+
+
+-- Dumping structure for procedure iee2019067_schema.drop_players
+DROP PROCEDURE IF EXISTS `drop_players`; 
+DELIMITER //
+CREATE PROCEDURE `drop_players`()
+BEGIN
 	DELETE FROM players WHERE piece_color='P';
 	INSERT INTO players (piece_color) VALUES ('P');
 	DELETE FROM players where piece_color='R';
 	INSERT INTO players (piece_color) VALUES ('R');
-  DELETE FROM position where id=1 or id=2;
-	INSERT INTO position VALUES (1, 4, 2), (2,10,12);
-	DELETE FROM game_status;
-	INSERT INTO game_status VALUES ("started","R",null,"2023-12-31 18:01:55");
+  UPDATE score SET Red=0, Purple=0;              -- drop score of their game
+  
 END//
 DELIMITER ;
 
