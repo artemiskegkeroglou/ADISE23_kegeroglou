@@ -309,12 +309,10 @@ BEGIN
     declare p_value int(5);
     declare r varchar(10);
     declare p varchar(10);
-    declare status1 varchar(10);
     declare status2 varchar(10);
     declare status_value varchar(10);
     declare RorP varchar(2);
     set r="Red", p="Purple";
-    set status1="aborded";
     set status2="ended";
     select status into status_value from game_status;
     
