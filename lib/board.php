@@ -61,22 +61,22 @@ function move_piece($x,$y,$input) {
 	
 	if($piece_color=='R'){
 		$number = move_Rnumber($x,$y); //return position for Red player into steps
-		$number += ($dice);
+		$number += ($dice); //prosthesi me o zari
 		if(($piece=='K1')&&($number>=51)){
 			$number=51;
-			$x2=move_Rx($number);
+			$x2=move_Rx($number); //kainourgia thesi gia to pioni
 			$y2=move_Ry($number);
 			print json_encode(['Message'=>"Finish K1 in x=7 y=5. K2 in position x=3 y=2."]);
 			do_move($x,$y,$x2,$y2,$piece_color);
 			show_board();
 			$x2=3;
 			$y2=2;
-			nextPosition($x2,$y2,$piece_color);
+			nextPosition($x2,$y2,$piece_color); //3,2 h thesi ekinisis tou red K2 
 			exit;
 		}
 	    else if(($piece=='K2')&&($number>=50)){
 			$number=50;
-			$x2=move_Rx($number);
+			$x2=move_Rx($number); //kainourgia thesi gia to pioni
 			$y2=move_Ry($number);
 			print json_encode(['Message'=>"You won!!!"]);
 			do_move($x,$y,$x2,$y2,$piece_color);
@@ -89,7 +89,7 @@ function move_piece($x,$y,$input) {
 			exit;
 		}
 		else {
-		    $x2=move_Rx($number);
+		    $x2=move_Rx($number); //kainourgia thesi gia to pioni
 		    $y2=move_Ry($number);
 			if(ispawn($x2,$y2)!=null){ //ena pioni tou idiou paikth kathe fora sto paixnidi, opote sigoura pioni antipalou
 				print json_encode(['Message'=>"There is a purple pawn in this position. You won!"]);
@@ -114,18 +114,18 @@ function move_piece($x,$y,$input) {
 		$number = $number+$dice;
 		if(($piece=='K1')&&($number>=51)){
 			$number=51;
-			$x2=move_Px($number);
+			$x2=move_Px($number);  //kainourgia thesi gia to pioni
 			$y2=move_Py($number);
 			print json_encode(['Message'=>"Finish K1 in x=7 y=9. K2 in position x=11 y=12"]);
 			do_move($x,$y,$x2,$y2,$piece_color);
 			show_board();			
 			$x2=11;
 			$y2=12;
-			nextPosition($x2,$y2,$piece_color);
+			nextPosition($x2,$y2,$piece_color); //11,12 h thesi ekinisis tou purple K2 
 			exit;
 		}
 		else if(($piece=='K2')&&($number>=50)){
-			$x2=move_Px($number);
+			$x2=move_Px($number); //kainourgia thesi gia to pioni
 		    $y2=move_Py($number);
 			print json_encode(['Message'=>"You won!!!"]);
 			
@@ -260,16 +260,16 @@ function get_position($piece_color,$xORy){
 function nextPosition($x2,$y2,$piece_color){
 	if($piece_color=='R'){
 		global $mysqli;
-		$id=1; 
-		$sql = 'update position set x=?, y=? where id=?';
+		$id=1; //gia red player
+		$sql = 'update position set x=?, y=? where id=?'; //apothikeusi sto position thn thesi pou exei to pioni ekeinh thn stigmh
 		$st = $mysqli->prepare($sql);
 		$st->bind_param('iii',$x2,$y2,$id);
 		$st->execute();
 	}
 	else{
 		global $mysqli;
-		$id=2; 
-		$sql = 'update position set x=?, y=? where id=?';
+		$id=2; //gia purple player
+		$sql = 'update position set x=?, y=? where id=?'; //apothikeusi sto position thn thesi pou exei to pioni ekeinh thn stigmh
 		$st = $mysqli->prepare($sql);
 		$st->bind_param('iii',$x2,$y2,$id);
 		$st->execute();

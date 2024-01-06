@@ -4,7 +4,7 @@ require_once "../lib/users.php";
 
 function show_status() {
 	global $mysqli;
-	check_abort();
+	check_abort(); //set status='aborded' if it is necessary
 	show_score();
 	$sql = 'select * from game_status';
 	$st = $mysqli->prepare($sql);
@@ -18,7 +18,7 @@ function show_status() {
 
 function check_abort() {
 	global $mysqli;
-	$sql = "update game_status set status='aborded', result=null, p_turn=null where p_turn is not null and last_change<(now()-INTERVAL 10 MINUTE) and status='started'";
+	$sql = "update game_status set status='aborded', result=null, p_turn=null where p_turn is not null and last_change<(now()-INTERVAL 10 MINUTE) and status='started'"; //10 minutes for each couple of players
 	$st = $mysqli->prepare($sql);
 	$r = $st->execute();
 }
@@ -87,7 +87,7 @@ function update_game_status() { //status value='not active' or 'initialized' or 
 
 function pawn_color($x,$y) {
 	global $mysqli;
-	$sql = 'select piece_color from board where x=? and y=?';
+	$sql = 'select piece_color from board where x=? and y=?'; //elegxos an metaferetai pioni h oxi
 	$st = $mysqli->prepare($sql);
 	$st->bind_param('ii',$x,$y);
 	$st->execute();
@@ -100,7 +100,7 @@ function pawn_color($x,$y) {
 	
 function selectPiece($x,$y){
 	global $mysqli;
-	$sql = 'select piece from board where x=? and y=?';
+	$sql = 'select piece from board where x=? and y=?';  //select piece, wste na jerw poio pioni metaferw kathe stigmh (K1 h K2)
 	$st = $mysqli->prepare($sql);
 	$st->bind_param('ii',$x,$y);
 	$st->execute();
@@ -112,7 +112,7 @@ function selectPiece($x,$y){
 }
 
 //for red player
-function move_Rx($number){
+function move_Rx($number){  //gia na paei sthn swsth thesi (x,y) to red pioni (sumfwna me thn diadromi pou akolouthei)
 	global $mysqli;
 	$sql = 'select x from move_R where number=?';
 	$st = $mysqli->prepare($sql);
@@ -125,7 +125,7 @@ function move_Rx($number){
 	return(null);
 }
 
-function move_Ry($number){
+function move_Ry($number){  //gia na paei sthn swsth thesi (x,y) to red pioni (sumfwna me thn diadromi pou akolouthei)
 	global $mysqli;
 	$sql = 'select y from move_R where number=?';
 	$st = $mysqli->prepare($sql);
@@ -138,7 +138,7 @@ function move_Ry($number){
 	return(null);
 }
 
-function move_Rnumber($x,$y){
+function move_Rnumber($x,$y){ //apo ta x,y (prohgoumenes function) briskw se poia thesi einai to pioni (bima)
 	if((($x==4) && ($y==2))||(($x==3) && ($y==2))) //arxikes theseis tou K1 kai K2 gia red player
 	{
 		return(0);
@@ -156,7 +156,7 @@ function move_Rnumber($x,$y){
 }
 
 //for purple player
-function move_Px($number){
+function move_Px($number){  //gia na paei sthn swsth thesi (x,y) to purple pioni (sumfwna me thn diadromi pou akolouthei)
 	global $mysqli;
 	$sql = 'select x from move_P where number=?';
 	$st = $mysqli->prepare($sql);
@@ -169,7 +169,7 @@ function move_Px($number){
 	return(null);
 }
 
-function move_Py($number){
+function move_Py($number){  //gia na paei sthn swsth thesi (x,y) to purple pioni (sumfwna me thn diadromi pou akolouthei)
 	global $mysqli;
 	$sql = 'select y from move_P where number=?';
 	$st = $mysqli->prepare($sql);
@@ -181,7 +181,7 @@ function move_Py($number){
 	}
     return(null);
 }
-function move_Pnumber($x,$y){
+function move_Pnumber($x,$y){  //apo ta x,y (prohgoumenes function) briskw se poia thesi einai to pioni (bima)
 	if((($x==10) && ($y==12))||(($x==11) && ($y==12))) //arxikes theseis tou K1 kai K2 gia purple player
 	{
 		return(0);
@@ -198,7 +198,7 @@ function move_Pnumber($x,$y){
 	return(null);
 }	
 
-function ispawn($x2,$y2) { //function for destination position
+function ispawn($x2,$y2) { //function gia anagnwrisi tou ti brisketai ekei pou phgainei to pioni. An brisketai pioni tote einai sigoura antipalou (giati kathe paikths exei ena pioni tou sto paixnidi kathe fora)
 	
 	global $mysqli;
 	$sql = 'select piece_color from board where x=? and y=?';
@@ -212,13 +212,13 @@ function ispawn($x2,$y2) { //function for destination position
 	return(null);
 }
 
-function count_score(){  //set score of Red Purple players
+function count_score(){  //set score of Red, Purple players
     global $mysqli;
 	$sql = 'call `count_score`();';
 	$st = $mysqli->prepare($sql);
 	$st->execute();
 }
-function show_score(){  //show score of Red Purple players
+function show_score(){  //show score of Red, Purple players
     global $mysqli;
 	$sql = 'select * from score';
 	$st = $mysqli->prepare($sql);

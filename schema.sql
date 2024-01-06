@@ -102,8 +102,8 @@ DROP TABLE IF EXISTS `move_P`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `move_P` (
-  `number` int(5) NOT NULL,
-  `x` tinyint(1) NOT NULL,
+  `number` int(5) NOT NULL,                                      --bhma
+  `x` tinyint(1) NOT NULL,                                       --thesi x,y sto bhma auto
   `y` tinyint(1) NOT NULL,
   PRIMARY KEY (`number`,`x`,`y`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -127,8 +127,8 @@ DROP TABLE IF EXISTS `move_R`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `move_R` (
-  `number` int(5) NOT NULL,
-  `x` tinyint(1) NOT NULL,
+  `number` int(5) NOT NULL,                                        --bhma
+  `x` tinyint(1) NOT NULL,                                         --thesi x,y sto bhma auto
   `y` tinyint(1) NOT NULL,
   PRIMARY KEY (`number`,`x`,`y`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -174,7 +174,7 @@ UNLOCK TABLES;
 -- Table structure for table `position`
 --
 
-DROP TABLE IF EXISTS `position`;
+DROP TABLE IF EXISTS `position`; --thesi pioniou kathse stigmh gia red (id=1) kai purple (id=2)
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `position` (
@@ -199,7 +199,7 @@ UNLOCK TABLES;
 -- Table structure for table `show_winner`
 --
 
-DROP TABLE IF EXISTS `show_winner`;
+DROP TABLE IF EXISTS `show_winner`; -- status=0 not a winner, status=1 winner gia tous paiktes
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `show_winner` (
@@ -258,7 +258,7 @@ BEGIN
 	REPLACE INTO board SELECT * FROM board_empty;
 	UPDATE show_winner SET status=0 WHERE id=1 or id=2; -- set status=0=no winner, for a new game
   DELETE FROM position where id=1 or id=2;
-	INSERT INTO position VALUES (1, 4, 2), (2, 10, 12);
+	INSERT INTO position VALUES (1, 4, 2), (2, 10, 12); -- arxikes theseis gia K1 red, K1 purple (prwto pioni)
 	UPDATE game_status SET status="started", p_turn=null, result=null, last_change="2023-12-31 18:01:55";
 END//
 DELIMITER ;
@@ -286,7 +286,7 @@ BEGIN
   declare p, p_color varchar(2);
 	select  piece into p  FROM `board` WHERE X=x1 AND Y=y1;
 	select  piece_color into p_color  FROM `board` WHERE X=x1 AND Y=y1;
-    if(color_of_player!=p_color) then 
+    if(color_of_player!=p_color) then                                                               -- an paei na metakinhsei pioni pou den tou anhkei na mhn ginei h metakinhsh
 	update board
 	set piece=p, piece_color=p_color
 	where x=x2 and y=y2;
@@ -316,14 +316,14 @@ BEGIN
     set status2="ended";
     select status into status_value from game_status;
     
-    select result into RorP from game_status where status='ended';
-	if(RorP='R') then
-    select Red into r_value from score;
-	UPDATE score set Red=r_value+1;
-	end if;
+    select result into RorP from game_status where status='ended';  -- mono an exei kapoios kerdisei pernei ponto 
+	  if(RorP='R') then
+      select Red into r_value from score;
+	    UPDATE score set Red=r_value+1;  -- score=palio+1
+	  end if;
     if (RorP='P') then
-    select Purple into p_value from score;
-	UPDATE score set Purple=p_value+1;
+      select Purple into p_value from score;
+	    UPDATE score set Purple=p_value+1; -- score=palio+1
     end if;
 END//
 DELIMITER ;

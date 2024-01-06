@@ -50,7 +50,7 @@ function set_user($b,$input) {
 	$st2->bind_param('sss',$username,$username,$b);
 	$st2->execute();
 	update_game_status();
-	print_r("First move for red player : x=4 y=2 and for purple player : x=10 y=12!");
+	print_r("First move for red player : x=4 y=2 and for purple player : x=10 y=12!"); //first positions of red, purple players
 	print_r ("\n");
 	$sql = 'select * from players where piece_color=?';
 	$st = $mysqli->prepare($sql);
@@ -67,7 +67,7 @@ function current_token($piece_color) {
 	
 	global $mysqli;
 	if($piece_color==null) {return(null);}
-	$sql = 'select * from players where piece_color=?';
+	$sql = 'select * from players where piece_color=?'; //get token of player
 	$st = $mysqli->prepare($sql);
 	$st->bind_param('s',$piece_color);
 	$st->execute();
@@ -80,7 +80,7 @@ function current_token($piece_color) {
 
 function show_winner(){
 	global $mysqli;
-	$sql = 'select winner from show_winner where status=1';
+	$sql = 'select winner from show_winner where status=1'; //show winner
 	$st = $mysqli->prepare($sql);
 	$st->execute();
 	$res = $st->get_result();

@@ -47,7 +47,7 @@ function handle_board($method,$input) {
 
 function handle_piece($method, $input) {
     if($method=='GET') {
-        $x=get_position($input['piece_color'],'x');
+        $x=get_position($input['piece_color'],'x'); //thesi tou pioniou apo thn basi
         $y=get_position($input['piece_color'],'y');
         show_piece($x,$y);
 }   else if ($method=='PUT') {
