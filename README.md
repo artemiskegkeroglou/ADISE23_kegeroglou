@@ -25,7 +25,11 @@
         - [Board]()
         - [Players]()
         - [Game_status]()
-        - [Πίνακες βάσης]()
+        - [Score]()
+		- [Move_P]()
+		- [Move_R]()
+		- [Position]()
+		- [Show_winner]()
 
 
 # Demo Page
